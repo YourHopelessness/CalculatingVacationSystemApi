@@ -4,14 +4,17 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using CalculationVacationSystem.BL;
 using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
@@ -29,7 +32,14 @@ namespace CalculationVacationSystem.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            var str = Configuration["Database:ConnectionString"];
+            services.AddDbContext<DAL.Context.BaseDbContext>(opt =>
+            {
+                opt.UseNpgsql(str);
+                opt.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
+            });
+            services.AddScoped<IEmployeesServiceInterface, EmloyeeService>();
+            services.AddAutoMapper(typeof(MapperProfile));
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
