@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CalculationVacationSystem.WebApi.Models
+namespace CalculationVacationSystem.BL.Dto
 {
     public class ColleaguesInfoDto
     {

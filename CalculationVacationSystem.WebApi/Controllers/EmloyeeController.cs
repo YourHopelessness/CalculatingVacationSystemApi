@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CalculationVacationSystem.BL;
-using CalculationVacationSystem.WebApi.Dto;
+﻿using CalculationVacationSystem.BL.Dto;
+using CalculationVacationSystem.BL.Services;
+using CalculationVacationSystem.WebApi.Attributes;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace CalculationVacationSystem.WebApi.Controllers
 {
@@ -22,19 +19,8 @@ namespace CalculationVacationSystem.WebApi.Controllers
         }
 
         [HttpGet("[action]")]
+        [Authorize]
         public async Task<EmployeeInfoDto> GetMyInfo() => await _employeeServices.GetMyInfo();
 
-        [HttpOptions("{id}")]
-        public IActionResult PreflightRoute(int id)
-        {
-            return NoContent();
-        }
-
-        // OPTIONS: api/TodoItems2 
-        [HttpOptions]
-        public IActionResult PreflightRoute()
-        {
-            return NoContent();
-        }
     }
 }

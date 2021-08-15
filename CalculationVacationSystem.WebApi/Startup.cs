@@ -1,22 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using CalculationVacationSystem.BL;
-using Microsoft.AspNetCore.Authentication.Certificate;
+using CalculationVacationSystem.BL.Services;
+using CalculationVacationSystem.BL.Utils;
+using CalculationVacationSystem.WebApi.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace CalculationVacationSystem.WebApi
 {
@@ -32,13 +28,14 @@ namespace CalculationVacationSystem.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var str = Configuration["Database:ConnectionString"];
             services.AddDbContext<DAL.Context.BaseDbContext>(opt =>
             {
-                opt.UseNpgsql(str);
+                opt.UseNpgsql(Configuration["Database:ConnectionString"]);
                 opt.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
             });
             services.AddScoped<IEmployeesServiceInterface, EmloyeeService>();
+            services.AddScoped<IJwtUtils, JwtTokenGenerator>();
+            services.AddScoped<IAuthData, AuthService>();
             services.AddAutoMapper(typeof(MapperProfile));
             services.AddCors(options =>
             {
@@ -51,7 +48,10 @@ namespace CalculationVacationSystem.WebApi
                                          .AllowCredentials();
                               });
             });
-            services.AddControllers();
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+            services.AddControllers()
+                    .AddJsonOptions(x =>
+                            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CalculationVacationSystem.WebApi", Version = "v1" });
@@ -74,8 +74,12 @@ namespace CalculationVacationSystem.WebApi
             app.UseRouting();
 
             app.UseCors(options => options.SetIsOriginAllowed(x => _ = true).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
-            app.UseAuthentication();
-            app.UseAuthorization();
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+            app.UseMiddleware<JwtMiddleware>();
+
+            /*app.UseAuthentication();
+            app.UseAuthorization();*/
 
             app.UseEndpoints(endpoints =>
             {
