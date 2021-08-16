@@ -26,7 +26,7 @@ namespace CalculationVacationSystem.BL.Utils
         public string GenerateJwtToken(UserData user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JWT:SecretKey"]);
+            var key = Encoding.ASCII.GetBytes(_configuration["JWT"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] 
@@ -50,7 +50,7 @@ namespace CalculationVacationSystem.BL.Utils
                 return null;
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JWT:SecretKey"]);
+            var key = Encoding.ASCII.GetBytes(_configuration["JWT"]);
             try
             {
                 tokenHandler.ValidateToken(token, new TokenValidationParameters

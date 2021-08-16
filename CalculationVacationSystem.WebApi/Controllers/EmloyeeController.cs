@@ -3,6 +3,7 @@ using CalculationVacationSystem.BL.Services;
 using CalculationVacationSystem.WebApi.Attributes;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CalculationVacationSystem.WebApi.Controllers
@@ -20,7 +21,13 @@ namespace CalculationVacationSystem.WebApi.Controllers
 
         [HttpGet("[action]")]
         [Authorize]
-        public async Task<EmployeeInfoDto> GetMyInfo() => await _employeeServices.GetMyInfo();
+        public async Task<EmployeeInfoDto> GetMyInfo() => 
+            await _employeeServices.GetInfo(((UserData)HttpContext.Items["User"]).Id);
+
+        [HttpGet("[action]")]
+        [Authorize]
+        public async Task<IEnumerable<string>> GetColleaguesNames() => 
+            await _employeeServices.GetAllColleagues(((UserData)HttpContext.Items["User"]).Id);
 
     }
 }

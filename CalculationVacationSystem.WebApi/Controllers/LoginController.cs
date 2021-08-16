@@ -10,6 +10,7 @@ namespace CalculationVacationSystem.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LoginController : ControllerBase
     {
         private readonly IAuthData _auth;
@@ -34,7 +35,6 @@ namespace CalculationVacationSystem.WebApi.Controllers
 
         private void SetTokenCookie(string token)
         {
-            // append cookie with refresh token to the http response
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,

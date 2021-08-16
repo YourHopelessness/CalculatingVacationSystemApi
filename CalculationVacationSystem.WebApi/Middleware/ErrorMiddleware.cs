@@ -39,7 +39,7 @@ namespace CalculationVacationSystem.WebApi.Middleware
 
                 response.StatusCode = error switch
                 {
-                    BL.Utils.WebException => (int)HttpStatusCode.BadRequest, // handled while the data is wrong
+                    CVSApiException       => (int)HttpStatusCode.BadRequest, // handled while the data is wrong
                     KeyNotFoundException  => (int)HttpStatusCode.NotFound,   // not found page 
                     _                     => (int)HttpStatusCode.InternalServerError, // unexpected error
                 };

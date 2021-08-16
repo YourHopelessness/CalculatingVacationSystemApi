@@ -25,7 +25,6 @@ namespace CalculationVacationSystem.BL.Utils
                             src.Employee.LastName,
                             src.Employee.SecondName)))
                  .ForMember(d => d.Id, opt => opt.MapFrom(src => src.EmployeeId));
-
         }
     }
 }

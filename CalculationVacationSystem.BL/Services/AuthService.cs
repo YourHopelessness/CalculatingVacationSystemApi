@@ -10,6 +10,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.IO;
 using AutoMapper;
+using System.Collections.Generic;
+using CalculationVacationSystem.DAL.Entities;
 
 namespace CalculationVacationSystem.BL.Services
 {
@@ -22,13 +24,12 @@ namespace CalculationVacationSystem.BL.Services
         /// <param name="pass">entered password that needs to hash</param>
         /// <returns>token</returns>
         Task<string> AuthentificateAsync(string username, string pass);
-
         /// <summary>
         /// Get user by id
         /// </summary>
         /// <param name="id">id of user</param>
         /// <returns>user data info</returns>
-        Task<EmployeeInfoDto> GetById(Guid id);
+        Task<UserData> GetById(Guid id);
     }
     public class AuthService : IAuthData
     {
@@ -58,11 +59,11 @@ namespace CalculationVacationSystem.BL.Services
                                         .FirstOrDefaultAsync();
             if (user == null) // if there's no user with that username
             {
-                WebException.ConcreteException(IncorrectDataType.Username);
-                throw new WebException();
+                CVSApiException.ConcreteException(IncorrectDataType.Username);
+                throw new CVSApiException();
             }
-            var globalCrypt = new HMACSHA512(Encoding.ASCII.GetBytes(_configuration["GlobalSalt:Salt"]));
-            var decPass = globalCrypt.ComputeHash(Encoding.ASCII.GetBytes("admin"));
+            var globalCrypt = new HMACSHA512(Encoding.ASCII.GetBytes(_configuration["GlobalSalt"]));
+            var decPass = globalCrypt.ComputeHash(Encoding.ASCII.GetBytes(pass));
             var personalCrypt = new HMACSHA512(Encoding.ASCII.GetBytes(user.Salt));
             var Pass = Convert.ToBase64String(personalCrypt.ComputeHash(decPass));
             if (user.Passhash == Pass)
@@ -70,16 +71,23 @@ namespace CalculationVacationSystem.BL.Services
                 return _jwtTokenGen.GenerateJwtToken(
                         _mapper.Map<UserData>(user));
             }
-            WebException.ConcreteException(IncorrectDataType.Password);
-            throw new WebException();
+            CVSApiException.ConcreteException(IncorrectDataType.Password);
+            throw new CVSApiException();
         }
 
-        public async Task<EmployeeInfoDto> GetById(Guid id)
+        /// <inheritdoc></inheritdoc>
+        public async Task<UserData> GetById(Guid id)
         {
-            var user = await _dbContext.Employees.Where(a => a.Id == id).AsNoTracking().FirstOrDefaultAsync();
-            return _mapper.Map<EmployeeInfoDto>(user);
+            var user = await _dbContext.Auths
+                                       .AsNoTracking()
+                                       .Include(a => a.Employee)
+                                       .SingleOrDefaultAsync(a => a.EmployeeId == id);
+            if (user == default(Auth))
+            {
+                CVSApiException.ConcreteException(IncorrectDataType.NoSuchUser);
+                throw new CVSApiException();
+            }
+            return _mapper.Map<UserData>(user);
         }
-
-       
     }
 }

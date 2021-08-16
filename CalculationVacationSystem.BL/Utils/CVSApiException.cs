@@ -10,20 +10,21 @@ namespace CalculationVacationSystem.BL.Utils
     public enum IncorrectDataType
     {
         Username,
-        Password
+        Password,
+        NoSuchUser
     }
     /// <summary>
     /// Custom exception for example when gets wrong data
     /// </summary>
-    public class WebException : Exception
+    public class CVSApiException : Exception
     {
         private static string _message;
 
-        public WebException() : base(_message) {}
+        public CVSApiException() : base(_message) {}
 
-        public WebException(string message) : base(message) { }
+        public CVSApiException(string message) : base(message) { }
 
-        public WebException(string message, params object[] args) 
+        public CVSApiException(string message, params object[] args) 
             : base(String.Format(CultureInfo.CurrentCulture, message, args))
         {
         }
@@ -34,6 +35,7 @@ namespace CalculationVacationSystem.BL.Utils
             {
                 IncorrectDataType.Username => "The username is incorrect",
                 IncorrectDataType.Password => "The password is incorrect",
+                IncorrectDataType.NoSuchUser => "There's no users with that id",
                 _ => "Data is incorrect",
             };
         }
