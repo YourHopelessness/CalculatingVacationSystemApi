@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace CalculationVacationSystem.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LoginController : ControllerBase
     {
         private readonly IAuthData _auth;
@@ -20,21 +22,20 @@ namespace CalculationVacationSystem.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public IActionResult Authentificate([FromBody] AuthentificationDto userCredential)
+        public async Task<IActionResult> Authentificate([FromBody] AuthentificationDto userCredential)
         {
-            var token = _auth.AuthentificateAsync(userCredential.Username, userCredential.Password);
+            var token = await _auth.AuthentificateAsync(userCredential.Username, userCredential.Password);
             if (token == null)
             {
                 return Unauthorized();
             }
 
-            SetTokenCookie(token.Result);
-            return Ok(JsonSerializer.Serialize(token.Result));
+            SetTokenCookie(token);
+            return Ok(JsonSerializer.Serialize(token));
         }
 
         private void SetTokenCookie(string token)
         {
-            // append cookie with refresh token to the http response
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,

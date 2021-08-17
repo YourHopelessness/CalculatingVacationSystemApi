@@ -1,10 +1,5 @@
-﻿using System;
+﻿using CalculationVacationSystem.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using CalculationVacationSystem.DAL.Entities;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -17,7 +12,8 @@ namespace CalculationVacationSystem.DAL.Context
         }
 
         public BaseDbContext(DbContextOptions<BaseDbContext> options)
-            : base(options)  {
+            : base(options)
+        {
         }
 
         public virtual DbSet<Auth> Auths { get; set; }

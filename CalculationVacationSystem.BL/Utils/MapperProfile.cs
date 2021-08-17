@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
-using CalculationVacationSystem.DAL.Entities;
 using CalculationVacationSystem.BL.Dto;
+using CalculationVacationSystem.DAL.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CalculationVacationSystem.BL.Utils
 {
@@ -25,7 +21,6 @@ namespace CalculationVacationSystem.BL.Utils
                             src.Employee.LastName,
                             src.Employee.SecondName)))
                  .ForMember(d => d.Id, opt => opt.MapFrom(src => src.EmployeeId));
-
         }
     }
 }

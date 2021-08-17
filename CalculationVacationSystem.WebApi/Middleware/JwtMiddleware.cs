@@ -10,7 +10,7 @@ namespace CalculationVacationSystem.WebApi.Middleware
     {
         private readonly RequestDelegate _next;
 
-        public JwtMiddleware(RequestDelegate next) =>  _next = next;
+        public JwtMiddleware(RequestDelegate next) => _next = next;
 
         public async Task Invoke(HttpContext context, IAuthData userService, IJwtUtils jwtUtils)
         {

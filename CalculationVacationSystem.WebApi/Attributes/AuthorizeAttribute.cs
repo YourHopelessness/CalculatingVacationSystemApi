@@ -1,5 +1,4 @@
 ﻿using CalculationVacationSystem.BL.Dto;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -8,6 +7,9 @@ using System.Linq;
 
 namespace CalculationVacationSystem.WebApi.Attributes
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     {
@@ -18,10 +20,10 @@ namespace CalculationVacationSystem.WebApi.Attributes
                 return;
 
             // authorization
-            var user = (EmployeeInfoDto)context.HttpContext.Items["User"];
+            var user = (UserData)context.HttpContext.Items["User"];
             if (user == null)
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
         }
     }
-    
+
 }

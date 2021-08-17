@@ -1,7 +1,6 @@
 using CalculationVacationSystem.BL.Services;
 using CalculationVacationSystem.BL.Utils;
 using CalculationVacationSystem.WebApi.Middleware;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -10,29 +9,33 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace CalculationVacationSystem.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DAL.Context.BaseDbContext>(opt =>
             {
-                opt.UseNpgsql(Configuration["Database:ConnectionString"]);
+                if (_env.IsDevelopment())
+                    opt.UseNpgsql(Configuration["Database:ConnectionString"]);
+                else
+                    opt.UseSqlServer(Configuration["Database:ConnectionString"]);
                 opt.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
             });
+            services.AddLogging();
             services.AddScoped<IEmployeesServiceInterface, EmloyeeService>();
             services.AddScoped<IJwtUtils, JwtTokenGenerator>();
             services.AddScoped<IAuthData, AuthService>();
@@ -42,7 +45,7 @@ namespace CalculationVacationSystem.WebApi
                 options.AddDefaultPolicy(
                               builder =>
                               {
-                                  builder.WithOrigins("https://192.168.0.2:4200", "https://192.168.0.2:5001")
+                                  builder.WithOrigins("https://192.168.0.2:4200", "https://192.168.0.2:5001") //TODO move to appsettings
                                          .AllowAnyHeader()
                                          .AllowAnyMethod()
                                          .AllowCredentials();
@@ -77,9 +80,6 @@ namespace CalculationVacationSystem.WebApi
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<JwtMiddleware>();
-
-            /*app.UseAuthentication();
-            app.UseAuthorization();*/
 
             app.UseEndpoints(endpoints =>
             {
