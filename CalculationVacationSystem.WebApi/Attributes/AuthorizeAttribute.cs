@@ -8,6 +8,9 @@ using System.Linq;
 
 namespace CalculationVacationSystem.WebApi.Attributes
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class AuthorizeAttribute : Attribute, IAuthorizationFilter
     {

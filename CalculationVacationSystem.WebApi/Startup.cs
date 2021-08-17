@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using System;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -18,21 +19,27 @@ namespace CalculationVacationSystem.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DAL.Context.BaseDbContext>(opt =>
             {
-                opt.UseNpgsql(Configuration["Database:ConnectionString"]);
+                if(_env.IsDevelopment())
+                    opt.UseNpgsql(Configuration["Database:ConnectionString"]);
+                else 
+                    opt.UseSqlServer(Configuration["Database:ConnectionString"]);
                 opt.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
             });
+            services.AddLogging();
             services.AddScoped<IEmployeesServiceInterface, EmloyeeService>();
             services.AddScoped<IJwtUtils, JwtTokenGenerator>();
             services.AddScoped<IAuthData, AuthService>();
