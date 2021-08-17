@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
 
 namespace CalculationVacationSystem.BL.Utils
 {
@@ -20,11 +16,11 @@ namespace CalculationVacationSystem.BL.Utils
     {
         private static string _message;
 
-        public CVSApiException() : base(_message) {}
+        public CVSApiException() : base(_message) { }
 
         public CVSApiException(string message) : base(message) { }
 
-        public CVSApiException(string message, params object[] args) 
+        public CVSApiException(string message, params object[] args)
             : base(String.Format(CultureInfo.CurrentCulture, message, args))
         {
         }

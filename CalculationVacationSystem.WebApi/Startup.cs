@@ -1,7 +1,6 @@
 using CalculationVacationSystem.BL.Services;
 using CalculationVacationSystem.BL.Utils;
 using CalculationVacationSystem.WebApi.Middleware;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using System;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace CalculationVacationSystem.WebApi
@@ -33,9 +29,9 @@ namespace CalculationVacationSystem.WebApi
         {
             services.AddDbContext<DAL.Context.BaseDbContext>(opt =>
             {
-                if(_env.IsDevelopment())
+                if (_env.IsDevelopment())
                     opt.UseNpgsql(Configuration["Database:ConnectionString"]);
-                else 
+                else
                     opt.UseSqlServer(Configuration["Database:ConnectionString"]);
                 opt.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
             });
@@ -49,7 +45,7 @@ namespace CalculationVacationSystem.WebApi
                 options.AddDefaultPolicy(
                               builder =>
                               {
-                                  builder.WithOrigins("https://192.168.0.2:4200", "https://192.168.0.2:5001")
+                                  builder.WithOrigins("https://192.168.0.2:4200", "https://192.168.0.2:5001") //TODO move to appsettings
                                          .AllowAnyHeader()
                                          .AllowAnyMethod()
                                          .AllowCredentials();
@@ -84,9 +80,6 @@ namespace CalculationVacationSystem.WebApi
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<JwtMiddleware>();
-
-            /*app.UseAuthentication();
-            app.UseAuthorization();*/
 
             app.UseEndpoints(endpoints =>
             {

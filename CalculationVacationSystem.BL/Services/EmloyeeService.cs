@@ -1,13 +1,14 @@
-﻿using CalculationVacationSystem.DAL.Context;
+﻿using AutoMapper;
 using CalculationVacationSystem.BL.Dto;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
-using AutoMapper;
+using CalculationVacationSystem.BL.Utils;
+using CalculationVacationSystem.DAL.Context;
 using CalculationVacationSystem.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
-using CalculationVacationSystem.BL.Utils;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CalculationVacationSystem.BL.Services
 {
@@ -36,41 +37,44 @@ namespace CalculationVacationSystem.BL.Services
     {
         private readonly BaseDbContext _dbcontext;
         private readonly IMapper _mapper;
-        private readonly IJwtUtils _jwt;
+        private readonly ILogger<EmloyeeService> _logger;
 
         /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="dbcontext">database context</param>
         /// <param name="mapper">maps</param>
-        /// <param name="jwt">maps</param>
-        public EmloyeeService(BaseDbContext dbcontext, 
+        /// <param name="logger">logger</param>
+        public EmloyeeService(BaseDbContext dbcontext,
                               IMapper mapper,
-                              IJwtUtils jwt)
+                              ILogger<EmloyeeService> logger)
         {
             _dbcontext = dbcontext;
             _mapper = mapper;
-            _jwt = jwt;
+            _logger = logger;
         }
 
         /// <inheritdoc></inheritdoc>
         public async Task<EmployeeInfoDto> GetInfo(Guid Id)
         {
+            _logger.LogInformation($"Finding user with id = {Id}");
             var user = await _dbcontext.Employees
                     .AsNoTracking()
                     .Include(c => c.Structure)
                     .SingleAsync(e => e.Id == Id);
             if (user == default(Employee))
             {
+                _logger.LogError($"User not found");
                 CVSApiException.ConcreteException(IncorrectDataType.NoSuchUser);
                 throw new CVSApiException();
             }
 
-            var chief = 
+            _logger.LogInformation($"Getting user info, id = {Id}");
+            var chief =
                 await _dbcontext.Auths
                                 .Include(a => a.Employee)
                                 .AsNoTracking()
-                                .Where(e => e.Employee.StructureId == 
+                                .Where(e => e.Employee.StructureId ==
                                             user.StructureId && e.Role == 2)
                                 .FirstOrDefaultAsync();
             var employeeInfo = new EmployeeInfoDto();
@@ -86,14 +90,17 @@ namespace CalculationVacationSystem.BL.Services
         /// <inheritdoc></inheritdoc>
         public async Task<IEnumerable<string>> GetAllColleagues(Guid id)
         {
+            _logger.LogInformation($"Finding user with id = {id}");
             var user = await _dbcontext.Employees
                                 .AsNoTracking()
                                 .SingleOrDefaultAsync(a => a.Id == id);
             if (user == default(Employee))
             {
+                _logger.LogError($"User not found");
                 CVSApiException.ConcreteException(IncorrectDataType.NoSuchUser);
                 throw new CVSApiException();
             }
+            _logger.LogInformation($"Getting colleagues of user, id = {id}");
             return await _dbcontext.Employees
                                    .AsNoTracking()
                                    .Where(e => e.StructureId == user.StructureId)

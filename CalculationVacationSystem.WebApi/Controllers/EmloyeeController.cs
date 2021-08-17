@@ -21,12 +21,12 @@ namespace CalculationVacationSystem.WebApi.Controllers
 
         [HttpGet("[action]")]
         [Authorize]
-        public async Task<EmployeeInfoDto> GetMyInfo() => 
+        public async Task<EmployeeInfoDto> GetMyInfo() =>
             await _employeeServices.GetInfo(((UserData)HttpContext.Items["User"]).Id);
 
         [HttpGet("[action]")]
         [Authorize]
-        public async Task<IEnumerable<string>> GetColleaguesNames() => 
+        public async Task<IEnumerable<string>> GetColleaguesNames() =>
             await _employeeServices.GetAllColleagues(((UserData)HttpContext.Items["User"]).Id);
 
     }

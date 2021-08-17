@@ -39,15 +39,15 @@ namespace CalculationVacationSystem.WebApi.Middleware
 
                 response.StatusCode = error switch
                 {
-                    CVSApiException       => (int)HttpStatusCode.BadRequest, // handled while the data is wrong
-                    KeyNotFoundException  => (int)HttpStatusCode.NotFound,   // not found page 
-                    _                     => (int)HttpStatusCode.InternalServerError, // unexpected error
+                    CVSApiException => (int)HttpStatusCode.BadRequest, // handled while the data is wrong
+                    KeyNotFoundException => (int)HttpStatusCode.NotFound,   // not found page 
+                    _ => (int)HttpStatusCode.InternalServerError, // unexpected error
                 };
                 var result = JsonSerializer.Serialize(new { message = error?.Message });
                 await response.WriteAsync(result);
             }
         }
-            
+
     }
-    
+
 }
