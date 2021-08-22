@@ -66,16 +66,18 @@ namespace CalculationVacationSystem.BL.Services
                 CVSApiException.ConcreteException(IncorrectDataType.Username);
                 throw new CVSApiException();
             }
+
             _logger.LogInformation($"Validating password of user with username = {username}");
             var globalCrypt = new HMACSHA512(Encoding.ASCII.GetBytes(_configuration["GlobalSalt"]));
             var decPass = globalCrypt.ComputeHash(Encoding.ASCII.GetBytes(pass));
             var personalCrypt = new HMACSHA512(Encoding.ASCII.GetBytes(user.Salt));
             var Pass = Convert.ToBase64String(personalCrypt.ComputeHash(decPass));
+
             if (user.Passhash == Pass)
             {
                 _logger.LogInformation($"Authetificate user {username}");
                 return _jwtTokenGen.GenerateJwtToken(
-                        _mapper.Map<UserData>(user));
+                            _mapper.Map<UserData>(user));
             }
             _logger.LogError($"Password is not match");
             CVSApiException.ConcreteException(IncorrectDataType.Password);
