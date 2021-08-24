@@ -1,9 +1,8 @@
-﻿using CalculationVacationSystem.WebApi.Attributes;
-using CalculationVacationSystem.BL.Dto;
+﻿using CalculationVacationSystem.BL.Dto;
+using CalculationVacationSystem.BL.Services;
+using CalculationVacationSystem.WebApi.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CalculationVacationSystem.WebApi.Controllers
@@ -14,17 +13,21 @@ namespace CalculationVacationSystem.WebApi.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [AuthorizeCVS]
-    public class RequestController
+    public class RequestController : Controller
     {
-        public RequestController() { }
+        private readonly IRequestHandler _request;
+        public RequestController(IRequestHandler request)
+        {
+            _request = request;
+        }
 
         /// <summary>
         /// Get all request of employee
         /// </summary>
         /// <returns>list of requests</returns>
         [HttpGet("[action]")]
-        public async Task<RequestDto[]> GetMyRequests()
-        { throw new NotImplementedException("No reliazation"); }
+        public async Task<RequestDto[]> GetMyRequests() =>
+           await _request.GetEmpoyeeRequest(((UserData)HttpContext.Items["User"]).Id);
 
         /// <summary>
         /// Get request for approval
@@ -32,8 +35,9 @@ namespace CalculationVacationSystem.WebApi.Controllers
         /// <returns>list of request</returns>
         [HttpGet("[action]")]
         [AuthorizeCVS(Role = "employer")]
-        public async Task<RequestDto[]> GetApprovals()
-        { throw new NotImplementedException("No reliazation"); }
+        public async Task<RequestDto[]> GetApprovals() =>
+            await _request.GetEmpoyerRequest(((UserData)HttpContext.Items["User"]).Id);
+        
 
         /// <summary>
         /// Approve request

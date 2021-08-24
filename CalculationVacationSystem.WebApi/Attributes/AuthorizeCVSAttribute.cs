@@ -39,7 +39,10 @@ namespace CalculationVacationSystem.WebApi.Attributes
 
             if (Role != null && user?.Role != Role)
             {
-                context.Result = new JsonResult(new { message = "Forbidden" }) { StatusCode = StatusCodes.Status403Forbidden };
+                context.Result = new JsonResult(new
+                {
+                    message = $"Expected role is {Role}, but now is {user?.Role}"
+                }) { StatusCode = StatusCodes.Status403Forbidden };
                 return;
             }
         }

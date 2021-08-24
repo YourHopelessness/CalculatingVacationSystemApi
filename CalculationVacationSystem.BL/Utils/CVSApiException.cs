@@ -7,7 +7,8 @@ namespace CalculationVacationSystem.BL.Utils
     {
         Username,
         Password,
-        NoSuchUser
+        NoSuchUser,
+        NoRights
     }
     /// <summary>
     /// Custom exception for example when gets wrong data
@@ -32,6 +33,7 @@ namespace CalculationVacationSystem.BL.Utils
                 IncorrectDataType.Username => "The username is incorrect",
                 IncorrectDataType.Password => "The password is incorrect",
                 IncorrectDataType.NoSuchUser => "There's no users with that id",
+                IncorrectDataType.NoRights => "User doesn't have rights to do this actions",
                 _ => "Data is incorrect",
             };
         }
