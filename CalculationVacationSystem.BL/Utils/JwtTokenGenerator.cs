@@ -10,11 +10,27 @@ using System.Text;
 
 namespace CalculationVacationSystem.BL.Utils
 {
+    /// <summary>
+    /// Interface that declare method for jwt tokens
+    /// </summary>
     public interface IJwtUtils
     {
+        /// <summary>
+        /// Generate new jwt token and user's claim
+        /// </summary>
+        /// <param name="user">user info</param>
+        /// <returns>generate token</returns>
         string GenerateJwtToken(UserData user);
+        /// <summary>
+        ///Validete jwt token when authorization is needs
+        /// </summary>
+        /// <param name="token">user token</param>
+        /// <returns>guid of finded user or null if user is not founded</returns>
         Guid? ValidateJwtToken(string token);
     }
+    /// <summary>
+    /// Implements IJwtUtils interface 
+    /// </summary>
     public class JwtTokenGenerator : IJwtUtils
     {
         private readonly IConfiguration _configuration;
@@ -28,6 +44,7 @@ namespace CalculationVacationSystem.BL.Utils
 
         public string GenerateJwtToken(UserData user)
         {
+            _logger.LogInformation($"Generate new token for user {user.FullName}");
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["JWT"]);
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -38,7 +55,7 @@ namespace CalculationVacationSystem.BL.Utils
                     new Claim(ClaimTypes.Name, user.FullName),
                     new Claim(ClaimTypes.Role, user.Role)
                 }),
-                Expires = DateTime.UtcNow.AddDays(1), // expires tomorrow
+                Expires = DateTime.UtcNow.AddDays(7), // expires tomorrow
                 SigningCredentials =
                     new SigningCredentials(new SymmetricSecurityKey(key),
                                            SecurityAlgorithms.HmacSha256Signature) // signed by HS256

@@ -9,10 +9,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace CalculationVacationSystem.WebApi
 {
+    /// <summary>
+    /// Startup class
+    /// </summary>
     public class Startup
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
@@ -21,6 +26,9 @@ namespace CalculationVacationSystem.WebApi
             _env = env;
         }
 
+        /// <summary>
+        /// Application Configuration
+        /// </summary>
         public IConfiguration Configuration { get; }
         private readonly IWebHostEnvironment _env;
 
@@ -37,8 +45,9 @@ namespace CalculationVacationSystem.WebApi
             });
             services.AddLogging();
             services.AddScoped<IEmployeesServiceInterface, EmloyeeService>();
-            services.AddScoped<IJwtUtils, JwtTokenGenerator>();
             services.AddScoped<IAuthData, AuthService>();
+            services.AddScoped<IRequestHandler, RequestService>();
+            services.AddTransient<IJwtUtils, JwtTokenGenerator>();
             services.AddAutoMapper(typeof(MapperProfile));
             services.AddCors(options =>
             {
@@ -57,7 +66,20 @@ namespace CalculationVacationSystem.WebApi
                             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CalculationVacationSystem.WebApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo 
+                { 
+                    Title = "CalculationVacationSystem.WebApi",
+                    Version = "v1",
+                    Description = "Application thats calculate vacations of employees",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Darya",
+                        Url = new Uri("https://github.com/YourHopelessness"),
+                    }
+
+                });
+                var filePath = Path.Combine(AppContext.BaseDirectory, "CalculationVacationSystem.WebApi.xml");
+                c.IncludeXmlComments(filePath);
             });
         }
 
@@ -67,9 +89,10 @@ namespace CalculationVacationSystem.WebApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CalculationVacationSystem.WebApi v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CalculationVacationSystem.WebApi v1"));
 
             app.UseHttpsRedirection();
             app.UseDefaultFiles();

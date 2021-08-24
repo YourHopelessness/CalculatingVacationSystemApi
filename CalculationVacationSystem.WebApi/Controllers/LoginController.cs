@@ -11,7 +11,7 @@ namespace CalculationVacationSystem.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [AuthorizeCVS]
     public class LoginController : ControllerBase
     {
         private readonly IAuthData _auth;
@@ -42,6 +42,13 @@ namespace CalculationVacationSystem.WebApi.Controllers
                 Expires = DateTime.UtcNow.AddDays(7)
             };
             Response.Cookies.Append("JWT", token, cookieOptions);
+        }
+
+        [HttpPost("[action]")]
+        public void Logout()
+        {
+            Response.Cookies.Delete("JWT");
+            HttpContext.Items["User"] = null;
         }
     }
 }

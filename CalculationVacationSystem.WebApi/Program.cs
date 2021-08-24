@@ -19,8 +19,12 @@ namespace CalculationVacationSystem.WebApi
             {
                 if (context.HostingEnvironment.IsProduction())
                 {
-                    var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
-                    config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+                    string keyvaulturi = Environment.GetEnvironmentVariable("VaultUri");
+                    if (keyvaulturi != null)
+                    {
+                        var keyVaultEndpoint = new Uri(keyvaulturi);
+                        config.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+                    }
                 }
             })
             .ConfigureWebHostDefaults(webBuilder =>
