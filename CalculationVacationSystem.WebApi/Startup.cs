@@ -52,13 +52,13 @@ namespace CalculationVacationSystem.WebApi
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
-                              builder =>
-                              {
-                                  builder.WithOrigins("https://192.168.0.2:4200", "https://192.168.0.2:5001") //TODO move to appsettings
-                                         .AllowAnyHeader()
-                                         .AllowAnyMethod()
-                                         .AllowCredentials();
-                              });
+                    builder =>
+                    {
+                        builder.WithOrigins("https://192.168.0.2:4200", "https://192.168.0.2:5001") //TODO move to appsettings
+                                .AllowAnyHeader()
+                                .AllowAnyMethod()
+                                .AllowCredentials();
+                    });
             });
             //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
             services.AddControllers()

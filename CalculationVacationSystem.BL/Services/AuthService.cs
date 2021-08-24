@@ -57,6 +57,7 @@ namespace CalculationVacationSystem.BL.Services
             var user = await _dbContext.Auths
                                         .AsQueryable()
                                         .Include(a => a.Employee)
+                                        .Include(a => a.RoleNavigation)
                                         .Where(a => a.Username == username)
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync();
@@ -91,6 +92,7 @@ namespace CalculationVacationSystem.BL.Services
             var user = await _dbContext.Auths
                                        .AsNoTracking()
                                        .Include(a => a.Employee)
+                                       .Include(a => a.RoleNavigation)
                                        .SingleOrDefaultAsync(a => a.EmployeeId == id);
             if (user == default(Auth))
             {
