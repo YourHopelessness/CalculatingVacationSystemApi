@@ -30,10 +30,6 @@ namespace CalculationVacationSystem.WebApi.Controllers
             await _employeeServices.GetInfo(((UserData)HttpContext.Items["User"]).Id);
 
         [HttpGet("[action]")]
-        public async Task<IEnumerable<string>> GetColleaguesNames() =>
-            await _employeeServices.GetAllColleagues(((UserData)HttpContext.Items["User"]).Id);
-
-        [HttpGet("[action]")]
         public async Task<NotificationDto[]> GetNotifies() =>
             await _requestService.GetNotifies(((UserData)HttpContext.Items["User"]).Id);
 

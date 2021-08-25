@@ -44,7 +44,7 @@ namespace CalculationVacationSystem.WebApi
                 opt.UseLoggerFactory(LoggerFactory.Create(b => b.AddConsole()));
             });
             services.AddLogging();
-            services.AddScoped<IEmployeesServiceInterface, EmloyeeService>();
+            services.AddScoped<IEmployeesServiceInterface, EmployeeService>();
             services.AddScoped<IAuthData, AuthService>();
             services.AddScoped<IRequestHandler, RequestService>();
             services.AddTransient<IJwtUtils, JwtTokenGenerator>();

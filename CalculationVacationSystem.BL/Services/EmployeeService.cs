@@ -22,22 +22,15 @@ namespace CalculationVacationSystem.BL.Services
         /// </summary>
         /// <returns></returns>
         Task<EmployeeInfoDto> GetInfo(Guid id);
-
-        /// <summary>
-        /// Get all colleagues of current employee
-        /// </summary>
-        /// <param name="id">id of user</param>
-        /// <returns>List of colleagues</returns>
-        Task<IEnumerable<string>> GetAllColleagues(Guid id);
     }
     /// <summary>
     /// Employee service 
     /// </summary>
-    public class EmloyeeService : IEmployeesServiceInterface
+    public class EmployeeService : IEmployeesServiceInterface
     {
         private readonly BaseDbContext _dbcontext;
         private readonly IMapper _mapper;
-        private readonly ILogger<EmloyeeService> _logger;
+        private readonly ILogger<EmployeeService> _logger;
 
         /// <summary>
         /// Ctor
@@ -45,9 +38,9 @@ namespace CalculationVacationSystem.BL.Services
         /// <param name="dbcontext">database context</param>
         /// <param name="mapper">maps</param>
         /// <param name="logger">logger</param>
-        public EmloyeeService(BaseDbContext dbcontext,
+        public EmployeeService(BaseDbContext dbcontext,
                               IMapper mapper,
-                              ILogger<EmloyeeService> logger)
+                              ILogger<EmployeeService> logger)
         {
             _dbcontext = dbcontext;
             _mapper = mapper;
@@ -61,7 +54,7 @@ namespace CalculationVacationSystem.BL.Services
             var user = await _dbcontext.Employees
                     .AsNoTracking()
                     .Include(c => c.Structure)
-                    .SingleAsync(e => e.Id == Id);
+                    .FirstOrDefaultAsync(e => e.Id == Id);
             if (user == default(Employee))
             {
                 _logger.LogError($"User not found");
@@ -85,30 +78,6 @@ namespace CalculationVacationSystem.BL.Services
                             chief.Employee.LastName,
                             chief.Employee.SecondName);
             return employeeInfo;
-        }
-
-        /// <inheritdoc></inheritdoc>
-        public async Task<IEnumerable<string>> GetAllColleagues(Guid id)
-        {
-            _logger.LogInformation($"Finding user with id = {id}");
-            var user = await _dbcontext.Employees
-                                .AsNoTracking()
-                                .SingleOrDefaultAsync(a => a.Id == id);
-            if (user == default(Employee))
-            {
-                _logger.LogError($"User not found");
-                CVSApiException.ConcreteException(IncorrectDataType.NoSuchUser);
-                throw new CVSApiException();
-            }
-            _logger.LogInformation($"Getting colleagues of user, id = {id}");
-            return await _dbcontext.Employees
-                                   .AsNoTracking()
-                                   .Where(e => e.StructureId == user.StructureId)
-                                   .Select(e => string.Join(" ",
-                                                    e.FirstName,
-                                                    e.LastName,
-                                                    e.SecondName))
-                                   .ToListAsync();
         }
     }
 }
