@@ -2,7 +2,7 @@
 
 namespace CalculationVacationSystem.BL.Dto
 {
-    public class AuthentificationDto
+    public class AuthenticationDto
     {
         /// <summary>
         /// Username of user

@@ -28,17 +28,12 @@ namespace CalculationVacationSystem.Test.Unit.Services
             : base(
                 new DbContextOptionsBuilder<BaseDbContext>()
                     .UseSqlite(CreateInMemoryDatabase())
-                    .Options)
-        {
-            _connection = RelationalOptionsExtension.Extract(ContextOptions).Connection;
-        }
+                    .Options) => _connection = RelationalOptionsExtension.Extract(ContextOptions).Connection;
 
         private static DbConnection CreateInMemoryDatabase()
         {
             var connection = new SqliteConnection("Filename=:memory:");
-
             connection.Open();
-
             return connection;
         }
 

@@ -31,10 +31,10 @@ namespace CalculationVacationSystem.WebApi.Controllers
         /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<VacationDto[]> GetVacations(
-            [FromQuery] VacationYearType yearType, 
+            [FromQuery] VacationYearType yearType,
             [FromQuery] DateTime? dateStart,
-            [FromQuery] DateTime? dateEnd) 
-        { throw new NotImplementedException("No reliazation"); }
+            [FromQuery] DateTime? dateEnd)
+        => null;
 
         /// <summary>
         /// User takes a vacation
@@ -43,7 +43,7 @@ namespace CalculationVacationSystem.WebApi.Controllers
         /// <returns>null if success, else error message</returns>
         [HttpPost("[action]")]
         public async Task<string> PostTakeVacation([FromBody] VacationDto vacation)
-            { throw new NotImplementedException("No reliazation"); }
+        => null;
 
         /// <summary>
         /// Edit vacation on next year
@@ -52,6 +52,6 @@ namespace CalculationVacationSystem.WebApi.Controllers
         /// <returns>>null if success, else error message</returns>
         [HttpPut("[action]")]
         public async Task<string> PutEditVacation([FromBody] VacationDto vacation)
-        { throw new NotImplementedException("No reliazation"); }
+        => null;
     }
 }
