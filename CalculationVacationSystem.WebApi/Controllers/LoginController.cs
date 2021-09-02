@@ -22,13 +22,9 @@ namespace CalculationVacationSystem.WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> Authentificate([FromBody] AuthentificationDto userCredential)
+        public async Task<IActionResult> Authentificate([FromBody] AuthenticationDto userCredential)
         {
             var token = await _auth.AuthentificateAsync(userCredential.Username, userCredential.Password);
-            if (token == null)
-            {
-                return Unauthorized();
-            }
 
             SetTokenCookie(token);
             return Ok(JsonSerializer.Serialize(token));

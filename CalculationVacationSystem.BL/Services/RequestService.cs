@@ -94,7 +94,11 @@ namespace CalculationVacationSystem.BL.Services
 
         public async Task<RequestDto[]> GetEmpoyerRequest(Guid id)
         {
-            var employer = await _dbcontext.Auths.Where(a => a.EmployeeId == id).SingleOrDefaultAsync();
+            var employer = await _dbcontext.Auths
+                        .AsNoTracking()
+                        .Include(a => a.RoleNavigation)
+                        .Where(a => a.EmployeeId == id)
+                        .SingleOrDefaultAsync();
             if (employer.RoleNavigation.Name != "employer")
             {
                 _logger.LogError($"User {id} isn't employer");

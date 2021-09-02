@@ -55,7 +55,7 @@ namespace CalculationVacationSystem.BL.Utils
                     new Claim(ClaimTypes.Name, user.FullName),
                     new Claim(ClaimTypes.Role, user.Role)
                 }),
-                Expires = DateTime.UtcNow.AddDays(7), // expires tomorrow
+                Expires = DateTime.UtcNow.AddDays(1), // expires tomorrow
                 SigningCredentials =
                     new SigningCredentials(new SymmetricSecurityKey(key),
                                            SecurityAlgorithms.HmacSha256Signature) // signed by HS256

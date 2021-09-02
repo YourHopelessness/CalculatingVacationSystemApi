@@ -37,7 +37,7 @@ namespace CalculationVacationSystem.WebApi.Controllers
         [AuthorizeCVS(Role = "employer")]
         public async Task<RequestDto[]> GetApprovals() =>
             await _request.GetEmpoyerRequest(((UserData)HttpContext.Items["User"]).Id);
-        
+
 
         /// <summary>
         /// Approve request
@@ -46,7 +46,7 @@ namespace CalculationVacationSystem.WebApi.Controllers
         [HttpPut("[action]")]
         [AuthorizeCVS(Role = "employer")]
         public async Task PutApproveRequest([FromBody] Guid requestId)
-        { throw new NotImplementedException("No reliazation"); }
+        { }
 
         /// <summary>
         /// Dissaprove request
@@ -55,7 +55,7 @@ namespace CalculationVacationSystem.WebApi.Controllers
         [HttpPut("[action]")]
         [AuthorizeCVS(Role = "employer")]
         public async Task PutDissaproveRequest([FromBody] Guid requestId)
-        { throw new NotImplementedException("No reliazation"); }
+        { }
 
         /// <summary>
         /// When request is viewed
@@ -63,6 +63,6 @@ namespace CalculationVacationSystem.WebApi.Controllers
         /// <param name="requestId">id of request</param>
         [HttpPut("[action]")]
         public async Task PutViewedRequest([FromBody] Guid requestId)
-        { throw new NotImplementedException("No reliazation"); }
+        { }
     }
 }
